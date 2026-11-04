@@ -1,0 +1,19 @@
+2026-11-04 21:35:48 | DEBUG   | Piko Translator 1.6 debug sistemi baslatildi.
+2026-11-04 21:35:48 | DEBUG   | Python surumu: 3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]
+2026-11-04 21:35:48 | DEBUG   | Calisma dizini: C:\Users\ktume\Desktop\piko\1.6.1\piko_1_6_1_baslangic_paketi\PIKO_1_6_1
+2026-11-04 21:35:48 | INFO    | Piko IDE acildi.
+2026-11-04 21:36:02 | INFO    | Piko IDE kapatildi.
+2026-11-04 21:36:46 | DEBUG   | Piko Translator 1.6 debug sistemi baslatildi.
+2026-11-04 21:36:46 | DEBUG   | Python surumu: 3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]
+2026-11-04 21:36:46 | DEBUG   | Calisma dizini: C:\Users\ktume\Desktop\piko\1.6.1\piko_1_6_1_baslangic_paketi\PIKO_1_6_1
+2026-11-04 21:36:46 | INFO    | Piko IDE acildi.
+2026-11-04 21:36:51 | INFO    | Ceviri basladi: 230 karakter, 9 satir
+2026-11-04 21:36:51 | DEBUG   | LINE 1: program header
+2026-11-04 21:36:51 | DEBUG   | LINE 3: function selamla()
+2026-11-04 21:36:51 | INFO    | Ceviri tamamlandi: 9 Python satiri
+2026-11-04 21:36:51 | INFO    | Guvenlik duvari taramasi basladi.
+2026-11-04 21:36:51 | INFO    | Guvenlik taramasi bitti: 0 engel, 1 fonksiyon, 5 cagri.
+2026-11-04 21:36:51 | DEBUG   | Python cikti uzunlugu: 347 karakter
+2026-11-04 21:36:51 | INFO    | IDE ceviri butonu kullanildi.
+2026-11-04 21:36:51 | DEBUG   | Tarama ozeti: functions=1 calls=5 imports=0
+2026-11-04 21:37:31 | INFO    | Piko IDE kapatildi.

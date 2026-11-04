@@ -1,0 +1,12 @@
+program "Piko 1.6 GUI Ornegi"
+
+fonk selamla():
+    isim = gui_al("isim")
+    gui_mesaj("Piko", "Merhaba " + isim + "!")
+
+gui_pencere("Piko GUI", 520, 320)
+gui_yazi("Piko 1.6 ile ilk arayuzum", 20, 20)
+gui_yazi("Adin:", 20, 65)
+gui_giris("isim", 20, 95, 28)
+gui_buton("Selamla", 20, 140, selamla)
+gui_goster()
