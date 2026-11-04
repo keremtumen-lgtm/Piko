@@ -1,0 +1,76 @@
+PIKO 1.7 - KULLANIM REHBERI
+===========================
+
+PIKO 1.7, 1.6 surumundeki GUI, Web, Oyun, Ag/Ping, AST guvenlik taramasi,
+IDE ve Debug altyapisini korur. Python tabanli ceviri bu surumde devam eder.
+
+DOSYA YAPISI
+------------
+piko_translator_1_7.py   Piko cevirici, IDE, tarayici ve CLI
+piko_runtime_1_7.py     GUI/Web/Oyun/Ag ve standart kutuphane yardimcilari
+*.piko                  Ornek Piko programlari
+
+CALISTIRMA
+----------
+python piko_translator_1_7.py --dil
+python piko_translator_1_7.py piko_1_7_standart_ornek.piko --show
+python piko_translator_1_7.py piko_1_7_standart_ornek.piko --scan
+python piko_translator_1_7.py piko_1_7_standart_ornek.piko --run --debug
+python piko_translator_1_7.py piko_1_7_standart_ornek.piko --scan --json-report rapor.json
+python piko_translator_1_7.py --self-test
+python piko_translator_1_7.py --gui
+
+YENI 1.7 KOMUTLARI
+------------------
+Metin:
+  metin_buyut(metin), metin_kucult(metin), metin_kirp(metin)
+  metin_bol(metin, ayirac), metin_degistir(metin, eski, yeni, adet=-1)
+  metin_bul(metin, aranan), metin_baslar(metin, onek), metin_biter(metin, sonek)
+
+Liste:
+  liste_ekle(liste, oge)       Listeye oge ekler ve listeyi dondurur.
+  liste_cikar(liste, indeks)   Indeksteki ogeyi cikarir ve dondurur.
+  liste_kopyala(liste)         Yeni liste kopyasi dondurur.
+  liste_sirala(liste, ters=False)
+  liste_ters(liste)
+
+Sozluk:
+  sozluk_al(sozluk, anahtar, varsayilan=None)
+  sozluk_anahtarlar(sozluk), sozluk_degerler(sozluk)
+  sozluk_sil(sozluk, anahtar), sozluk_var_mi(sozluk, anahtar)
+
+Matematik / rastgele / zaman:
+  karekok(sayi), sinus(radyan), kosinus(radyan), faktoriyel(tam_sayi)
+  taban(sayi), tavan(sayi), rastgele_sayi(en_az, en_cok)
+  rastgele_sec(koleksiyon), simdi()
+  sinus/kosinus aciyi radyan olarak alir. simdi() yerel ISO-8601 saatini verir.
+
+Veri tipleri:
+  sayi(...), ondalik(...), metin(...), mantik(...), liste(...), sozluk(...)
+  demet(...) -> tuple, kume(...) -> set
+
+GUI / Web / Oyun / Ag
+---------------------
+1.6 API'leri korunmustur. GUI ve oyun icin Tk/Tkinter gerekir.
+Web onizleme 127.0.0.1'e baglanir. ag_ping yalnizca hostname/IP kabul eder.
+
+DEBUG VE TARAMA
+---------------
+--debug       Ayrintili log
+--trace       Satir ve token seviyesinde trace
+--scan        Fonksiyon, import, cagri, guvenlik ve kod metrikleri
+--json-report dosya.json  Makinece okunabilir rapor
+--self-test   Otomatik regresyon testleri
+
+GUVENLIK NOTU
+-------------
+AST guvenlik duvari bilinen bazi riskli import, isim ve ozellikleri engeller.
+Bu kontrol gercek bir sandbox veya isletim sistemi guvenlik duvari degildir.
+Guvenilmeyen kodlari calistirmayin. Ag fonksiyonlari dis agla iletisim kurabilir.
+
+PYTHON'DAN AYRILMA PLANI
+------------------------
+1.x: Python'a ceviri ve runtime destekli gelistirme.
+2.0: Piko Lexer + Parser.
+2.1: Piko bytecode ve compiler.
+2.2: Piko Virtual Machine icin ilk calisir cekirdek.

@@ -1,0 +1,29 @@
+PIKO 1.7 - DEGISIKLIKLER
+========================
+
+1) 1.6'da bulunan GUI, Web, Oyun, Ag/Ping, IDE, fonksiyon tarama ve temel
+   guvenlik kontrolleri korundu.
+2) Metin yardimcilari eklendi: metin_buyut, metin_kucult, metin_kirp,
+   metin_bol, metin_degistir, metin_bul, metin_baslar, metin_biter.
+3) Liste yardimcilari eklendi: liste_ekle, liste_cikar, liste_kopyala,
+   liste_sirala, liste_ters.
+4) Sozluk yardimcilari eklendi: sozluk_al, sozluk_anahtarlar,
+   sozluk_degerler, sozluk_sil, sozluk_var_mi.
+5) Matematik yardimcilari eklendi: karekok, sinus, kosinus, faktoriyel,
+   taban, tavan. Sinus ve kosinus radyan kullanir.
+6) Rastgele/zaman yardimcilari eklendi: rastgele_sayi, rastgele_sec, simdi.
+7) Veri tipi kisayollari eklendi: demet(...) ve kume(...).
+8) AST raporuna satir, dugum, fonksiyon, dongu, kosul, cagri ve atama
+   metrikleri eklendi.
+9) Yinelenen fonksiyon isimleri ve asiri uzun fonksiyonlar icin kalite
+   uyarilari eklendi.
+10) --json-report dosya.json secenegi eklendi.
+11) Guvenlik taramasina ek tehlikeli introspection ve dosya islemi nitelikleri
+    icin kontroller eklendi. Kaynak kod 250 KB ile sinirlandi.
+12) Otomatik test: 36/36 basarili.
+
+NOT
+---
+Piko 1.7 hala Python'a ceviri yapan bir surumdur. 2.0'da kendi Lexer/Parser,
+2.1'de bytecode, 2.2'de sanal makine hedeflenmektedir. AST guvenlik duvari
+isletim sistemi sandbox'i degildir; guvenilmeyen kodu calistirmayin.
