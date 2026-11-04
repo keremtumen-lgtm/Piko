@@ -1,0 +1,93 @@
+PIKO 1.6 - BASLANGIC PAKETI
+===========================
+
+Piko 1.6'da Türkçe ASCII komutlar kullanılır. Bu sürüm hâlâ Python'a çeviri yapar.
+2.x serisinde kendi lexer/parser ve bytecode/virtual machine altyapısına geçiş planlanır.
+
+DOSYALAR
+--------
+piko_translator_1_6.py : Çevirici, IDE, fonksiyon tarayıcı, statik güvenlik kontrolü
+piko_runtime_1_6.py    : GUI, web, oyun ve ağ yardımcı fonksiyonları
+*.piko                 : Örnek Piko programları
+
+GEREKSINIMLER
+-------------
+- Python 3.10 veya üzeri önerilir.
+- GUI ve oyun pencereleri için Python Tk desteği gerekir.
+- Web ve ağ özellikleri standart Python modüllerini kullanır.
+- Harici paket zorunlu değildir.
+
+BASLANGIC
+---------
+IDE'yi aç:
+    python piko_translator_1_6.py --gui
+
+Komutları göster:
+    python piko_translator_1_6.py --dil
+
+Testleri çalıştır:
+    python piko_translator_1_6.py --self-test
+
+Bir dosyayı tara:
+    python piko_translator_1_6.py piko_gui_ornek_1_6.piko --scan --debug
+
+Python çıktısını göster:
+    python piko_translator_1_6.py piko_gui_ornek_1_6.piko --show
+
+Güvenlik taramasından sonra çalıştır:
+    python piko_translator_1_6.py piko_gui_ornek_1_6.piko --run --debug
+
+AG KOMUTLARI
+------------
+ag_ping("example.com")
+    Bir adet ping isteği gönderir. Başarısızlıkta -1.0 döndürür.
+    Yalnızca IP adresi veya alan adı kabul eder; shell kullanmaz ve zaman aşımı vardır.
+
+internet_var_mi()
+    HTTPS bağlantısıyla internet erişimini kontrol eder.
+
+OYUN KOMUTLARI
+--------------
+oyun_pencere("Baslik", 800, 600)
+oyun_temizle()
+oyun_ciz_kare(x, y, genislik, yukseklik, "cyan")
+oyun_ciz_yazi("Skor", x, y, "white")
+oyun_tus_basildi_mi("left")
+oyun_baslat(guncelle_fonksiyonu, 60)
+
+GUI KOMUTLARI
+-------------
+gui_pencere("Baslik", 640, 420)
+gui_yazi("Metin", 20, 20)
+gui_giris("isim", 20, 60, 24)
+gui_al("isim")
+gui_buton("Tikla", 20, 100, fonksiyon_adi)
+gui_mesaj("Baslik", "Mesaj")
+gui_goster()
+
+WEB KOMUTLARI
+-------------
+web_proje("site_adi")
+web_html("<h1>Merhaba</h1>")
+web_css("h1 { color: blue; }")
+web_js("console.log('Piko');")
+web_onizle(8000)
+
+Web dosyaları piko_web_projects/<proje_adi>/ altında oluşturulur.
+Önizleme sunucusu yalnızca 127.0.0.1 adresine bağlanır.
+
+GUVENLIK NOTU
+-------------
+Piko'nun AST tabanlı güvenlik duvarı bilinen bazı riskli Python yapıları ve importları
+statik olarak engeller. Bu, işletim sistemi seviyesinde sandbox değildir ve her türlü
+kötü amaçlı kodu yakalayamaz. Yalnızca güvendiğin .piko dosyalarını çalıştır.
+
+ag_ping yalnızca tek ping paketi ve kısa zaman aşımı kullanır; toplu tarama aracı değildir.
+Piko web önizlemesi yerel makineye (127.0.0.1) bağlıdır, genel internete açılmaz.
+
+SURUM YOL HARITASI
+------------------
+1.6: GUI, web, oyun, ağ yardımcıları ve kapsamlı debug.
+2.0: Kendi lexer/parser altyapısı.
+2.1: Piko bytecode ve sanal makine prototipi.
+2.2+: Standart kütüphane ve Python çalışma zamanı bağımlılığını aşamalı azaltma.

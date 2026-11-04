@@ -1,0 +1,5 @@
+program "Piko 1.6 Ag Kontrolu"
+
+# Yalnizca kendi aginda veya kontrol etme iznin olan adresleri test et.
+yaz("Internet var mi?", internet_var_mi())
+yaz("example.com ping (ms):", ag_ping("example.com"))

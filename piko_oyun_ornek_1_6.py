@@ -1,0 +1,24 @@
+# Piko 1.6 runtime baglantisi
+from piko_runtime_1_6 import oyun_baslat, oyun_ciz_kare, oyun_ciz_yazi, oyun_pencere, oyun_temizle, oyun_tus_basildi_mi
+
+# program "Piko 1.6 Mini Oyun"
+
+konum = [180, 140]
+hiz = 4
+
+def guncelle():
+    if oyun_tus_basildi_mi("left"):
+        konum[0] = konum[0] - hiz
+    if oyun_tus_basildi_mi("right"):
+        konum[0] = konum[0] + hiz
+    if oyun_tus_basildi_mi("up"):
+        konum[1] = konum[1] - hiz
+    if oyun_tus_basildi_mi("down"):
+        konum[1] = konum[1] + hiz
+
+    oyun_temizle()
+    oyun_ciz_yazi("Oku tuslariyla kareyi hareket ettir", 15, 15, "white")
+    oyun_ciz_kare(konum[0], konum[1], 45, 45, "cyan")
+
+oyun_pencere("Piko Mini Oyun", 640, 420)
+oyun_baslat(guncelle, 60)
