@@ -1,0 +1,368 @@
+#Requires Python 3.8.10 minimum
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
+
+WORD_MAP: dict[str, str] = {
+    "ve": "and",
+    "veya": "or",
+    "degil": "not",
+    "dogru": "True",
+    "yanlis": "False",
+    "yok": "None",
+    "bitir": "break",
+    "devam": "continue",
+    "gec": "pass",
+}
+
+CALL_MAP: dict[str, str] = {
+    "yaz": "print",
+    "sor": "input",
+    "sayi": "int",
+    "ondalik": "float",
+    "metin": "str",
+    "liste": "list",
+    "sozluk": "dict",
+    "mantik": "bool",
+    "uzunluk": "len",
+    "aralik": "range",
+    "toplam": "sum",
+    "en_buyuk": "max",
+    "en_kucuk": "min",
+    "mutlak": "abs",
+    "yuvarla": "round",
+    "sirala": "sorted",
+    "tip": "type",
+    "numaralandir": "enumerate",
+    "hepsi": "all",
+    "herhangi": "any",
+    "birlestir": "zip",
+    "ters_cevir": "reversed",
+    "us": "pow",
+    "karakter": "chr",
+    "ascii_kodu": "ord",
+}
+
+
+def replace_words_outside_strings(source_line: str) -> str:
+    """Translate Piko words without modifying strings or comments."""
+    result: list[str] = []
+    i = 0
+    quote: str | None = None
+    escaped = False
+
+    while i < len(source_line):
+        char = source_line[i]
+
+        if quote is not None:
+            result.append(char)
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            i += 1
+            continue
+
+        if char == "#":
+            result.append(source_line[i:])
+            break
+
+        if char in ("'", '"'):
+            quote = char
+            result.append(char)
+            i += 1
+            continue
+
+        match = re.match(IDENT, source_line[i:])
+        if match:
+            word = match.group(0)
+            end = i + len(word)
+            if word in WORD_MAP:
+                replacement = WORD_MAP[word]
+            elif word in CALL_MAP and source_line[end:].lstrip().startswith("("):
+                replacement = CALL_MAP[word]
+            else:
+                replacement = word
+            result.append(replacement)
+            i = end
+            continue
+
+        result.append(char)
+        i += 1
+
+    return "".join(result)
+
+
+def _parse_function_args(raw: str) -> str:
+    """Accept `fonk topla(a, b):` and `fonk topla a b:` forms."""
+    raw = raw.strip()
+    if raw.startswith("(") and raw.endswith(")"):
+        depth = 0
+        quote: str | None = None
+        escaped = False
+        encloses_all = True
+        for index, char in enumerate(raw):
+            if quote is not None:
+                if escaped:
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                elif char == quote:
+                    quote = None
+                continue
+            if char in ("'", '"'):
+                quote = char
+            elif char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0 and index != len(raw) - 1:
+                    encloses_all = False
+                    break
+        if encloses_all and depth == 0:
+            raw = raw[1:-1].strip()
+
+    if not raw:
+        return ""
+
+    parts: list[str] = []
+    buffer: list[str] = []
+    depth = 0
+    quote: str | None = None
+    escaped = False
+
+    def save() -> None:
+        token = "".join(buffer).strip()
+        if token:
+            parts.append(token)
+
+    for char in raw:
+        if quote is not None:
+            buffer.append(char)
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+
+        if char in ("'", '"'):
+            quote = char
+            buffer.append(char)
+        elif char in "([{":
+            depth += 1
+            buffer.append(char)
+        elif char in ")]}":
+            depth = max(0, depth - 1)
+            buffer.append(char)
+        elif depth == 0 and (char.isspace() or char == ","):
+            save()
+            buffer = []
+        else:
+            buffer.append(char)
+
+    save()
+
+    normalized: list[str] = []
+    index = 0
+    while index < len(parts):
+        if index + 2 < len(parts) and parts[index + 1] == "=":
+            normalized.append(parts[index] + "=" + parts[index + 2])
+            index += 3
+        else:
+            normalized.append(parts[index])
+            index += 1
+
+    return ", ".join(replace_words_outside_strings(part) for part in normalized)
+
+
+def translate_line(line: str, line_number: int) -> str:
+    """Translate one Piko line into its Python equivalent."""
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        return line
+
+    match = re.match(r'^\s*program\s+["\'].*["\']\s*$', line)
+    if match:
+        indent = line[: len(line) - len(line.lstrip())]
+        return f"{indent}# {stripped}"
+
+    match = re.match(
+        rf"^(\s*)ice_al\s+({IDENT})(?:\s+(?:olarak|as)\s+({IDENT}))?\s*$",
+        line,
+    )
+    if match:
+        indent, module, alias = match.groups()
+        suffix = f" as {alias}" if alias else ""
+        return f"{indent}import {module}{suffix}"
+
+    patterns = [
+        (r"^(\s*)eger\s+(.+):\s*$", "if"),
+        (r"^(\s*)yada\s+(.+):\s*$", "elif"),
+        (r"^(\s*)iken\s+(.+):\s*$", "while"),
+    ]
+    for pattern, python_keyword in patterns:
+        match = re.match(pattern, line)
+        if match:
+            indent, expression = match.groups()
+            return f"{indent}{python_keyword} {replace_words_outside_strings(expression)}:"
+
+    if re.match(r"^\s*degilse\s*:\s*$", line):
+        indent = line[: len(line) - len(line.lstrip())]
+        return f"{indent}else:"
+
+    match = re.match(r"^(\s*)tekrar\s+(.+):\s*$", line)
+    if match:
+        indent, count = match.groups()
+        return (
+            f"{indent}for _piko_{line_number} "
+            f"in range({replace_words_outside_strings(count)}):"
+        )
+
+    match = re.match(
+        rf"^(\s*)her\s+({IDENT})\s+icinde\s+(.+):\s*$", line
+    )
+    if match:
+        indent, item, collection = match.groups()
+        return f"{indent}for {item} in {replace_words_outside_strings(collection)}:"
+
+    match = re.match(rf"^(\s*)fonk\s+({IDENT})\s*(.*):\s*$", line)
+    if match:
+        indent, function_name, raw_args = match.groups()
+        return f"{indent}def {function_name}({_parse_function_args(raw_args)}):"
+
+    match = re.match(r"^(\s*)ver(?:\s+(.+))?$", line)
+    if match:
+        indent, value = match.groups()
+        if value:
+            return f"{indent}return {replace_words_outside_strings(value)}"
+        return f"{indent}return"
+
+    if re.match(r"^\s*dene\s*:\s*$", line):
+        indent = line[: len(line) - len(line.lstrip())]
+        return f"{indent}try:"
+
+    match = re.match(
+        rf"^(\s*)yakala\s+({IDENT})(?:(?:\s+olarak|\s+as)\s+({IDENT}))?\s*:\s*$",
+        line,
+    )
+    if match:
+        indent, exception, alias = match.groups()
+        suffix = f" as {alias}" if alias else ""
+        return f"{indent}except {exception}{suffix}:"
+
+    if re.match(r"^\s*yakala\s*:\s*$", line):
+        indent = line[: len(line) - len(line.lstrip())]
+        return f"{indent}except Exception:"
+
+    if re.match(r"^\s*sonunda\s*:\s*$", line):
+        indent = line[: len(line) - len(line.lstrip())]
+        return f"{indent}finally:"
+
+    return replace_words_outside_strings(line)
+
+
+def translate(source: str) -> str:
+    lines = [
+        translate_line(line, number)
+        for number, line in enumerate(source.splitlines(), start=1)
+    ]
+    result = "\n".join(lines)
+    return result + ("\n" if result and not result.endswith("\n") else "")
+
+
+def language_help() -> str:
+    return """Piko 1.4 - Genişletilmiş Fonksiyon Desteği
+
+Yeni Eklenen Fonksiyonlar:
+  numaralandir(...) / hepsi(...) / herhangi(...)
+  birlestir(...) / ters_cevir(...) / us(...)
+  karakter(...) / ascii_kodu(...)
+
+Temel Yapılar:
+  program "Baslik"
+  eger / yada / degilse / iken
+  tekrar N / her oge icinde liste
+  fonk ad(parametreler): / ver deger
+  dene: / yakala: / sonunda:
+  bitir / devam / gec
+""".strip()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Piko v1.4 kodunu çevirir ve çalıştırır."
+    )
+    parser.add_argument("file", nargs="?", help="Çevrilecek .piko dosyası")
+    parser.add_argument("--run", action="store_true", help="Çevir ve programı çalıştır")
+    parser.add_argument("--show", action="store_true", help="Python çıktısını ekrana yaz")
+    parser.add_argument("--dil", "--language", action="store_true", help="Piko komutlarını göster")
+    args = parser.parse_args()
+
+    if args.dil:
+        print(language_help())
+        return 0
+    if not args.file:
+        parser.print_help()
+        return 1
+
+    source_path = Path(args.file)
+    if not source_path.is_file():
+        print(f"Hata: Dosya bulunamadı: {source_path}", file=sys.stderr)
+        return 1
+
+    try:
+        source = source_path.read_text(encoding="utf-8")
+        python_code = translate(source)
+    except (UnicodeDecodeError, OSError) as error:
+        print(f"Hata: Dosya okunamadı: {error}", file=sys.stderr)
+        return 1
+
+    try:
+        compiled_code = compile(python_code, str(source_path), "exec")
+    except SyntaxError as error:
+        print(
+            f"Piko yazım hatası, satır {error.lineno}: {error.msg}\n"
+            "Girintileri ve iki nokta üst üste işaretini kontrol et.",
+            file=sys.stderr,
+        )
+        return 1
+
+    if args.show:
+        print(python_code, end="")
+        return 0
+
+    output_path = source_path.with_suffix(".py")
+    try:
+        output_path.write_text(python_code, encoding="utf-8")
+    except OSError as error:
+        print(f"Hata: Python dosyası yazılamadı: {error}", file=sys.stderr)
+        return 1
+
+    if args.run:
+        print(f"--- {source_path.name} çalışıyor ---")
+        try:
+            exec(compiled_code, {"__name__": "__main__"})
+        except Exception as error:
+            print(
+                f"Çalışma zamanı hatası: {type(error).__name__}: {error}",
+                file=sys.stderr,
+            )
+            return 1
+    else:
+        print(f"Çeviri tamamlandı: {output_path}")
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
