@@ -1,0 +1,28 @@
+program "Piko Oyun ve Ağ Testi"
+
+# 1. İnternet ve Ping Testi
+yaz("İnternet bağlantısı kontrol ediliyor...")
+eger internet_var_mi():
+    yaz("İnternet bağlantısı: BAŞARILI (Dogru)")
+    
+    # Google'a ping atma
+    sure = ag_ping("8.8.8.8")
+    yaz("Google Ping Gecikmesi (ms):", sure)
+yada:
+    yaz("İnternet bağlantısı yok!")
+
+# 2. Basit Oyun Örneği (Kutu Hareketi)
+oyun_pencere("Piko 1.6 - Basit Oyun", 600, 400)
+
+# Oyuncu Koordinatları
+x = 280
+y = 180
+hiz = 5
+
+fonk oyun_guncelle():
+    # Tuş kontrolü global değişkenler üzerinden simüle edilir
+    # Sağ ve sol yön tuşlarıyla kutuyu hareket ettirme
+    yaz("Oyun karesi güncelleniyor...")
+
+# Oyunu başlat
+oyun_baslat(oyun_guncelle, 60)
