@@ -1,0 +1,53 @@
+PIKO 1.8 - KULLANIM
+===================
+
+Kurulum: Python 3.10+ onerilir. Tkinter, GUI ve oyun pencereleri icin gerekir.
+Translator ve runtime dosyalarini ayni klasorde tut.
+
+Kendi kendine test:
+  python piko_translator_1_8.py --self-test
+
+Komutlari goster:
+  python piko_translator_1_8.py --dil
+
+Cevir:
+  python piko_translator_1_8.py piko_1_8_oop_ornek.piko
+
+Goster (dosyaya yazmadan):
+  python piko_translator_1_8.py piko_1_8_oop_ornek.piko --show
+
+Tara:
+  python piko_translator_1_8.py piko_1_8_oop_ornek.piko --scan --json-report piko_rapor.json
+
+Calistir:
+  python piko_translator_1_8.py piko_1_8_oop_ornek.piko --run
+
+IDE:
+  python piko_translator_1_8.py --gui
+
+NESNE TABANLI PROGRAMLAMA
+-------------------------
+  sinif Kisi:
+      fonk kurucu(kendim, ad):
+          kendim.ad = ad
+      fonk tanit(kendim):
+          yaz(kendim.ad)
+
+  sinif Ogrenci(Kisi):
+      fonk kurucu(kendim, ad):
+          ust().__init__(ad)
+
+  kisi = Kisi("Ada")
+  kisi.tanit()
+  yaz(ornek_mi(kisi, Kisi))
+  yaz(sinif_adi(kisi))
+
+Destek: sinif, kalitim, kurucu, kendim, ust(), sinif degiskenleri,
+nesne degiskenleri, metotlar, metot ezme, ornek_mi ve sinif_adi.
+
+Notlar:
+- Piko 1.8 hala Python'a ceviri yapar. Bu surum bagimsiz VM degildir.
+- Firewall AST tabanli statik denetimdir; OS seviyesinde sandbox degildir.
+- --run yalnizca guvendigin Piko dosyalarinda kullanilmalidir.
+- GUI/Oyun ornekleri grafik masaustu oturumu gerektirir.
+- Web onizleme yalnizca yerel 127.0.0.1 adresine baglanir.
