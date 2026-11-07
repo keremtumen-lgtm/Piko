@@ -1,0 +1,21 @@
+PIKO 1.8 - DEGISIKLIKLER
+=======================
+
+YENI
+- sinif Kisi: ve sinif AltSinif(UstSinif):
+- fonk kurucu(...) otomatik olarak __init__ metoduna cevrilir.
+- kendim anahtar kelimesi self'e cevrilir.
+- ust() super() cagrisi olarak cevrilir.
+- ornek_mi(nesne, Sinif) isinstance cagrisidir.
+- sinif_adi(nesne) nesnenin sinif adini verir.
+- AST guvenlik tarayicisi siniflari raporlar; normal siniflari engellemez.
+- Raporlara sinif sayisi ve sinif listesi eklendi.
+
+KORUNAN
+- GUI, Web, Oyun, Ag/Ping ve 1.7 standart kutuphane yardimcilari.
+- IDE, --debug, --trace, --scan, --json-report ve --self-test.
+
+SURUM PLANI
+- 1.8: Nesne tabanli programlama.
+- 1.9: Atlandi.
+- 2.0: Lexer + Parser + AST, Python kodu uretmeden Piko AST olusturma.
